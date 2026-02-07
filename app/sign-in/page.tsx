@@ -10,11 +10,47 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Link from "next/dist/client/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
+import { signIn } from "@/lib/auth/auth-client";
+import { Label } from "@/components/ui/label";
 
 export default function SignInPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
+
+  async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      const result = await signIn.email({
+        email,
+        password,
+      });
+      if (result.error) {
+        setError(
+          result.error.message || "Failed to sign in. Please try again.",
+        );
+      } else {
+        router.push("/dashboard");
+      }
+    } catch (err) {
+      setError("Failed to sign in. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-white p-4">
-      {/* <Card className="w-full max-w-md border-gray-200 shadow-lg">
+      <Card className="w-full max-w-md border-gray-200 shadow-lg">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-black">
             Sign In
@@ -37,7 +73,7 @@ export default function SignInPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder="bruce@wayne.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -51,27 +87,14 @@ export default function SignInPage() {
               <Input
                 id="password"
                 type="password"
-                placeholder="your password"
+                placeholder="********"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 className="border-gray-300 focus:border-primary focus:ring-primary"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-gray-700">
-                Password
-              </Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={8}
-                className="border-gray-300 focus:border-primary focus:ring-primary"
-              />
-            </div>
+    
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             <Button
@@ -79,10 +102,10 @@ export default function SignInPage() {
               className="w-full bg-primary hover:bg-primary/90"
               disabled={loading}
             >
-              {loading ? "Creating account..." : "Sign Up"}
+              {loading ? "Signing in..." : "Sign In"}
             </Button>
             <p className="text-center text-sm text-gray-600">
-               Don't have an account?{" "}
+              Don't have an account?{" "}
               <Link
                 href="/sign-up"
                 className="font-medium text-primary hover:underline"
@@ -92,7 +115,7 @@ export default function SignInPage() {
             </p>
           </CardFooter>
         </form>
-      </Card> */}
+      </Card>
     </div>
   );
 }

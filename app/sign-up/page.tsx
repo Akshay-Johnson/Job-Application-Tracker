@@ -74,7 +74,7 @@ export default function SignUpPage() {
               <Input
                 id="name"
                 type="text"
-                placeholder="John Doe"
+                placeholder="Bruce Wayne"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -88,7 +88,7 @@ export default function SignUpPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder="bruce@wayne.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -102,6 +102,7 @@ export default function SignUpPage() {
               <Input
                 id="password"
                 type="password"
+                placeholder="********"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
