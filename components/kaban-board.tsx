@@ -1,11 +1,12 @@
 "use client";
 
 import column from "@/lib/models/column";
-import { Board, Column } from "@/lib/models/models.type";
+import { Board, Column, JobApplication } from "@/lib/models/models.type";
 import {
   Award,
   CalendarHeart,
   CheckCircle2,
+  Columns,
   Mic,
   MoreHorizontal,
   MoreVertical,
@@ -21,6 +22,7 @@ import {
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
 import CreateJobApplicationDialog from "./create-job-dialog";
+import JobApplicationCard from "./job-application-card";
 
 interface KanbanBoardProps {
   board: Board;
@@ -44,11 +46,16 @@ function DroppableColumn({
   column,
   config,
   boardId,
+  sortedColumns,
 }: {
   column: Column;
   config: ColumnConfig;
   boardId: string;
+  sortedColumns: Column[];
 }) {
+  const sortedJobApp =
+    column.jobApplications?.sort((a, b) => a.order - b.order) || [];
+
   return (
     <Card className="min-w-[300px] flex-shrink-0 shadow-md p-0">
       <CardHeader className={`${config.color} text-white rounded-lg pb-3 pt-3`}>
@@ -78,6 +85,14 @@ function DroppableColumn({
         </div>
       </CardHeader>
       <CardContent className="space-y-2 pt-4 bg-gray-50/50 min-h-[400px] rounded-b-lg">
+        {sortedJobApp.map((job, key) => (
+          <SortableJobCard
+            key={key}
+            job={{ ...job, columnId: job.columnId || column._id }}
+            columns={sortedColumns}
+          />
+        ))}
+
         <CreateJobApplicationDialog
           columnId={column._id}
           boardId={boardId}
@@ -87,8 +102,26 @@ function DroppableColumn({
   );
 }
 
+function SortableJobCard({
+  job,
+  columns,
+}: {
+  job: JobApplication;
+  columns: Column[];
+}) {
+  return (
+    <div>
+      <JobApplicationCard job={job} columns={columns} />
+    </div>
+  );
+}
+
 export default function KabanBoard({ board, userId }: KanbanBoardProps) {
   const columns = board.columns;
+
+  const sortedColumns = columns?.sort((a, b) => a.order - b.order) || [];
+
+  console.log(columns[0].jobApplications);
 
   return (
     <>
@@ -105,6 +138,7 @@ export default function KabanBoard({ board, userId }: KanbanBoardProps) {
                 column={col}
                 config={config}
                 boardId={board._id}
+                sortedColumns={sortedColumns}
               />
             );
           })}

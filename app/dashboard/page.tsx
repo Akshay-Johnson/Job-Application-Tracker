@@ -19,7 +19,11 @@ export default async function dashboardPage() {
     userId: session.user.id,
     name : "Job Hunt"
   }).populate({
-    path : "columns",
+    path: "columns",
+    populate: {
+      path: "jobApplications",
+    },
+
   })
 
   return (
