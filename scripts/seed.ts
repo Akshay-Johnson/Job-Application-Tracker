@@ -2,7 +2,7 @@ import dbConnect from "../lib/db";
 import "@/lib/models";
 import { Board, Column, JobApplication } from "@/lib/models";
 
-const USER_ID = "698b9a2236125d5fc4ad5e20";
+const USER_ID = "698b9e1da4628d526ae30b8f";
 
 const SAMPLE_JOBS = [
   // Wish List
