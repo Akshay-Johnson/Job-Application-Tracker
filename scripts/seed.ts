@@ -2,7 +2,7 @@ import dbConnect from "../lib/db";
 import "@/lib/models";
 import { Board, Column, JobApplication } from "@/lib/models";
 
-const USER_ID = "698722d4495751452c4c9b94";
+const USER_ID = "698b9a2236125d5fc4ad5e20";
 
 const SAMPLE_JOBS = [
   // Wish List
@@ -211,11 +211,11 @@ async function seed() {
 
     // Distribute jobs across columns
     const jobsByColumn: Record<string, typeof SAMPLE_JOBS> = {
-      "wishlist": SAMPLE_JOBS.slice(0, 3),
-      applied: SAMPLE_JOBS.slice(3, 7),
-      interviewing: SAMPLE_JOBS.slice(7, 10),
-      offer: SAMPLE_JOBS.slice(10, 12),
-      rejected: SAMPLE_JOBS.slice(12, 15),
+      "Wishlist": SAMPLE_JOBS.slice(0, 3),
+      "Applied": SAMPLE_JOBS.slice(3, 7),
+      "Interviewing": SAMPLE_JOBS.slice(7, 10),
+      "Offer": SAMPLE_JOBS.slice(10, 12),
+      "Rejected": SAMPLE_JOBS.slice(12, 15),
     };
 
     let totalCreated = 0;

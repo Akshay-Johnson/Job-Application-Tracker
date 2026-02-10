@@ -13,16 +13,14 @@ async function getBoard(userId: string) {
   const boardDoc = await Board.findOne({
     userId: userId,
     name: "Job Hunt",
-  })
-    .populate({
-      path: "columns",
-      populate: {
-        path: "jobApplications",
-      },
-    })
-    .lean();
+  }).populate({
+    path: "columns",
+    populate: {
+      path: "jobApplications",
+    },
+  }).lean();
 
-  if (!boardDoc) {
+  if(!boardDoc) {
     return null;
   }
 
@@ -32,20 +30,10 @@ async function getBoard(userId: string) {
 
 async function DashboardPage() {
   const session = await getSession();
+  const board = await getBoard(session?.user.id ?? "");
 
   if (!session?.user) {
     redirect("/sign-in");
-  }
-
-  const board = await getBoard(session.user.id);
-
-  // ⭐ HANDLE NULL BOARD
-  if (!board) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Preparing your dashboard...</p>
-      </div>
-    );
   }
 
   return (
@@ -55,7 +43,10 @@ async function DashboardPage() {
           <h1 className="text-3xl font-bold text-black ">{board.name}</h1>
           <p className="text-gray-600"> Track your job applications </p>
         </div>
-        <KanbanBoard board={board} userId={session.user.id} />
+        <KanbanBoard
+          board={board}
+          userId={session.user.id}
+        />
       </div>
     </div>
   );

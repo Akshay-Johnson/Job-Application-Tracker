@@ -84,7 +84,7 @@ function DroppableColumn({
     column.jobApplications?.sort((a, b) => a.order - b.order) || [];
 
   return (
-    <Card className="min-w-[200px] max-w-[285px] flex-shrink-0 shadow-md p-0">
+    <Card className="min-w-[285px] max-w-[285px] flex-shrink-0 shadow-md p-0 mx-auto" >
       <CardHeader className={`${config.color} text-white rounded-lg pb-3 pt-3`}>
         <div className="flex item-center justify-between">
           <div className="flex items-center gap-2">
@@ -94,20 +94,8 @@ function DroppableColumn({
             </CardTitle>
           </div>
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6 text-white hover:bg-white/20"
-              >
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem className="text-destructive">
-                <Trash2 className="mr-2 h-4 w-4" /> Delete Column
-              </DropdownMenuItem>
-            </DropdownMenuContent>
+            
+            
           </DropdownMenu>
         </div>
       </CardHeader>
