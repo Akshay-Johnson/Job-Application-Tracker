@@ -4,6 +4,8 @@ import { MongoClient } from "mongodb";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { initUserBoard } from "../init-user-board";
+import User from "../models/user";
+import dbConnect from "../db"; // ⭐ ADD THIS
 
 if (!process.env.MONGODB_URI) {
   throw new Error("Missing Mongo URI");
@@ -29,38 +31,80 @@ const mongoClient = await clientPromise;
 const db = mongoClient.db("jobtracker");
 
 export const auth = betterAuth({
-  database: mongodbAdapter(db, {
-    client: mongoClient,
-  }),
+  database: mongodbAdapter(db, { client: mongoClient }),
+
+  emailAndPassword: {
+    enabled: true,
+  },
+
+  deleteUser: {
+    enabled: true,
+  },
+
   session: {
     cookieCache: {
       enabled: true,
       maxAge: 60 * 60,
     },
   },
-  emailAndPassword: {
-    enabled: true,
-  },
+
   databaseHooks: {
     user: {
       create: {
         after: async (user) => {
-          if (user.id) {
-            await initUserBoard(user.id);
-          }
+          await dbConnect();
+
+          if (!user.id) return;
+
+          await User.create({
+            authUserId: user.id,
+          });
+
+          await initUserBoard(user.id);
+        },
+      },
+
+      delete: {
+        after: async (user) => {
+          await dbConnect();
+
+          if (!user.id) return;
+
+          await User.deleteOne({ authUserId: user.id });
+
+          const { Board } = await import("../models");
+
+          await Board.deleteMany({ userId: user.id });
         },
       },
     },
   },
 });
 
+
+/* ================= SESSION HELPER ================= */
+
 export async function getSession() {
+  await dbConnect();
+
   const result = await auth.api.getSession({
     headers: await headers(),
   });
 
+  if (!result?.user?.id) return null;
+
+  const appUser = await User.findOne({
+    authUserId: result.user.id,
+  });
+
+  if (!appUser || appUser.isDeleted) {
+    return null;
+  }
+
   return result;
 }
+
+/* ================= SIGN OUT HELPER ================= */
 
 export async function signOut() {
   const result = await auth.api.signOut({

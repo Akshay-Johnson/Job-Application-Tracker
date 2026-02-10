@@ -2,8 +2,7 @@
 
 import { signOut } from "@/lib/auth/auth-client";
 import { useRouter } from "next/dist/client/components/navigation";
-import { DropdownMenu } from "radix-ui";
-import { DropdownMenuItem } from "./ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuItem } from "./ui/dropdown-menu";
 
 export default function SignOutBtn() {
   const router = useRouter();

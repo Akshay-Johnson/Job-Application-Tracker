@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
-const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_URI = process.env.MONGODB_URI!;
+
+if (!MONGODB_URI) {
+  throw new Error("Missing MongoDB URI");
+}
 
 interface MongooseCache {
   conn: typeof mongoose | null;
@@ -8,41 +12,30 @@ interface MongooseCache {
 }
 
 declare global {
-  var mongoose: MongooseCache | undefined;
+  var mongooseCache: MongooseCache | undefined;
 }
 
-let cached: MongooseCache = global.mongoose || { conn: null, promise: null };
+const cached: MongooseCache = global.mongooseCache ?? {
+  conn: null,
+  promise: null,
+};
 
-if (!global.mongoose) {
-  global.mongoose = cached;
+if (!global.mongooseCache) {
+  global.mongooseCache = cached;
 }
 
 async function dbConnect() {
-  if (!MONGODB_URI) {
-    throw new Error("Please define the MONGODB_URI environment variable");
-  }
-
-  if (cached.conn) {
-    return cached.conn;
-  }
+  if (cached.conn) return cached.conn;
 
   if (!cached.promise) {
-    const opts = {
+    mongoose.set("strictQuery", true);
+
+    cached.promise = mongoose.connect(MONGODB_URI, {
       bufferCommands: false,
-    };
-
-    cached.promise = mongoose.connect(MONGODB_URI!, opts).then((mongoose) => {
-      return mongoose;
     });
-
-    try {
-      cached.conn = await cached.promise;
-    } catch (error) {
-      cached.promise = null;
-      throw error;
-    }
   }
 
+  cached.conn = await cached.promise;
   return cached.conn;
 }
 
