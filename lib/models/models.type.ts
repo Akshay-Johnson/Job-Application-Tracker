@@ -5,7 +5,7 @@ export interface JobApplication {
     location?: string;
     status: string;
     notes?: string;
-    salary?: number;
+    salary?: string;
     jobUrl?: string;
     order: number;
     columnId: string;
