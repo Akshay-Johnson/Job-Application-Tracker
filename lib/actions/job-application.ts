@@ -145,32 +145,32 @@ export async function updateJobApplication(
       $pull: { jobApplications: id },
     });
 
-    const jobInTargetColumn = await JobApplication.findOne({
+    const jobsInTargetColumn = await JobApplication.find({
       columnId: newColumnId,
       _id: { $ne: id },
     })
-      .sort({ order: -1 })
+      .sort({ order: 1 })
       .lean();
+
     let newOrderValue: number;
 
     if (order !== undefined && order !== null) {
       newOrderValue = order * 100;
 
-      const jobsThatNeedToShift = jobInTargetColumn.slice(order);
+      const jobsThatNeedToShift = jobsInTargetColumn.filter(
+        (job) => job.order >= newOrderValue,
+      );
+
       for (const job of jobsThatNeedToShift) {
         await JobApplication.findByIdAndUpdate(job._id, {
-          $inc: { order: job.order + 100 },
+          $inc: { order: 100 },
         });
       }
     } else {
-      if (jobInTargetColumn.length > 0) {
-        const lastJobOrder =
-          jobInTargetColumn[jobInTargetColumn.length - 1].order || 0;
-        newOrderValue = lastJobOrder + 100;
-      } else {
-        newOrderValue = 0;
-      }
+      const lastJob = jobsInTargetColumn[jobsInTargetColumn.length - 1];
+      newOrderValue = lastJob ? lastJob.order + 100 : 0;
     }
+
     updateToApply.columnId = newColumnId;
     updateToApply.order = newOrderValue;
 

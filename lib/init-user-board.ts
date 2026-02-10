@@ -5,20 +5,20 @@ import jobApplication from "./models/job-application";
 
 const DEFAULT_COLUMNS = [
   {
-    name: "wishlist",
+    name: "Wishlist",
     order: 0,
   },
   {
-    name: "applied",
+    name: "Applied",
     order: 1,
     },
-  {name: "interviewing",
+  {name: "Interviewing",
     order: 2,
     },
-    {name: "offer",
+    {name: "Offer",
     order: 3,
     },
-    {name: "rejected",
+    {name: "Rejected",
     order: 4,
     },
 ];
