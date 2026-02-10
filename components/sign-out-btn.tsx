@@ -17,7 +17,7 @@ export default function SignOutBtn() {
           alert("Failed to log out. Please try again.");
         }
       }}
-      className="text-gray-700 hover:text-black"
+      className="text-red-400 hover:text-red-600"
     >
       Log Out
     </DropdownMenuItem>
